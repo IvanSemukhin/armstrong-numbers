@@ -125,10 +125,8 @@ inline bool is_armstrong (const uint64_t& num) {
 
 inline int get_num_len (const uint64_t& num) {
     uint64_t copy_num = num;
-    int length = 0;
-    while (copy_num) {
+    int length = 1;
+    while (copy_num /= N)
         length++;
-        copy_num /= N;
-    }
     return length;
 }
