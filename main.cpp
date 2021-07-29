@@ -7,11 +7,8 @@
 using namespace std;
 
 extern const uint64_t pows[][SIZE];
-
 const int N = 10;
 const uint64_t MAX = 9223372036854775807;
-
-using namespace std;
 
 vector<uint64_t>& gen_next_candidates (const vector<uint64_t>& source_arr, const bool optimize = false);
 inline uint64_t get_pow_sum (const uint64_t& num);
