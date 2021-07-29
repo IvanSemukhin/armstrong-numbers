@@ -1,9 +1,9 @@
 #ifndef POWERS_TABLE_H
 #define POWERS_TABLE_H
 
-#define SIZE 20
+const int SIZE = 20;
 
-const unsigned long long pows[][SIZE] = {
+const uint64_t pows[][SIZE] = {
 	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 	{1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288},

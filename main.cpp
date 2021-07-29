@@ -6,22 +6,24 @@
 
 using namespace std;
 
-extern const unsigned long long pows[][SIZE];
+extern const uint64_t pows[][SIZE];
 
 const int N = 10;
-const int DEPTH = 19;
-const uint64_t MAX_LONG_JAVA = 9223372036854775807;
+const uint64_t MAX = 9223372036854775807;
 
 using namespace std;
 
 vector<uint64_t>& gen_next_candidates (const vector<uint64_t>& source_arr, const bool optimize = false);
 inline uint64_t get_pow_sum (const uint64_t& num);
 inline bool is_armstrong (const uint64_t& num);
+inline int get_num_len (const uint64_t& num);
 
 int main()
 {
     auto start_time = std::chrono::steady_clock::now();
 
+    const int DEPTH = get_num_len(MAX);
+    cout << "START GENERATE TO DEPTH: " << DEPTH << endl;
     vector<uint64_t> zero_arr = {0};
     vector<uint64_t> init_arr = {1, 2, 3, 4, 5, 6 ,7 ,8, 9};
     vector< vector<uint64_t>* > candidates_storage;
@@ -35,7 +37,7 @@ int main()
 
         for (const auto& element : *candidates_storage[i]) {
             uint64_t new_candidate = element * N;
-            if (new_candidate > MAX_LONG_JAVA)
+            if (new_candidate > MAX)
                 continue;
             candidates_storage[i+1]->push_back(new_candidate);
         }
@@ -52,10 +54,10 @@ int main()
                 armstrongs[pow_sum]++;
         }
 
+    cout << "armstrong numbers:" << endl;
     for (const auto& pair : armstrongs)
-        cout << pair.first << endl;
-
-    cout << "size: " << armstrongs.size() << endl;
+        if(pair.first <= MAX)
+            cout << pair.first << endl;
 
     end_time = std::chrono::steady_clock::now();
     elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
@@ -73,7 +75,7 @@ vector<uint64_t>& gen_next_candidates (const vector<uint64_t>& source_arr, const
         for (int i = last; i < N; i++) {
             uint64_t new_candidate = element * N + i;
             if (optimize) {
-                if (new_candidate > MAX_LONG_JAVA)
+                if (new_candidate > MAX)
                     continue;
                 else
                     res_next_arr->push_back(new_candidate);
@@ -122,4 +124,14 @@ inline bool is_armstrong (const uint64_t& num) {
             return false;
     }
     return res == num;
+}
+
+inline int get_num_len (const uint64_t& num) {
+    uint64_t copy_num = num;
+    int length = 0;
+    while (copy_num) {
+        length++;
+        copy_num /= N;
+    }
+    return length;
 }
