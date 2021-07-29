@@ -8,7 +8,7 @@ using namespace std;
 
 extern const uint64_t pows[][SIZE];
 const int N = 10;
-const uint64_t MAX = 9223372036854775807;
+const uint64_t MAX = 0x7FFFFFFFFFFFFFFF;
 
 vector<uint64_t>& gen_next_candidates (const vector<uint64_t>& source_arr, const bool optimize = false);
 inline uint64_t get_pow_sum (const uint64_t& num);
@@ -105,7 +105,7 @@ inline bool is_armstrong (const uint64_t& num) {
 	return false;
     uint64_t copy_num = num;
     int length = 0;
-    int ranks[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    int ranks[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     while (copy_num) {
         uint64_t remainder = copy_num % N;
         ranks[remainder]++;
@@ -114,7 +114,7 @@ inline bool is_armstrong (const uint64_t& num) {
     }
 
     uint64_t res = 0;
-    for (int i = SIZE-1; i >= 0; i--) {
+    for (int i = N-1; i >= 0; i--) {
         if (ranks[i])
             res += ranks[i] * pows[i][length];
         if (res > num)
