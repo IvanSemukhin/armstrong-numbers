@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-O3
+CFLAGS=-O3 -pthread
 
 all:
 	$(CC) $(CFLAGS) main.cpp -o armstrong_numbers

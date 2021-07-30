@@ -2,18 +2,25 @@
 #include <vector>
 #include <map>
 #include <chrono>
+#include <thread>
+#include <mutex>
 #include "powers_table.h"
 
 using namespace std;
 
 extern const uint64_t pows[][SIZE];
 const int N = 10;
+const int THR_NUM = 4;
 const uint64_t MAX = 0x7FFFFFFFFFFFFFFF;
+
+mutex g_lock;
 
 vector<uint64_t>& gen_next_candidates (const vector<uint64_t>& source_arr, const bool optimize = false);
 inline uint64_t get_pow_sum (const uint64_t& num);
 inline bool is_armstrong (const uint64_t& num);
 inline int get_num_len (const uint64_t& num);
+void thread_is_armstrong(const vector< vector<uint64_t>* >& storage, const vector<int>& depth_indx, map <uint64_t, int>& armstrongs);
+
 
 int main()
 {
@@ -43,13 +50,16 @@ int main()
     auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
     cout << "GENERATED TIME: " << elapsed.count() << " ms" << endl;
 
+    vector < vector<int> > indx_threads(THR_NUM);
+    for (int i = 1; i <= DEPTH; i++)
+        indx_threads[i % THR_NUM].push_back(i);
+
     map <uint64_t, int> armstrongs;
-    for (const auto& arr : candidates_storage)
-        for (const auto& elem : *arr) {
-            uint64_t pow_sum = get_pow_sum(elem);
-            if (is_armstrong(pow_sum))
-                armstrongs[pow_sum]++;
-        }
+    thread threads[THR_NUM];
+    for (int i = 0; i < THR_NUM;i++)
+        threads[i] = thread(thread_is_armstrong, cref(candidates_storage), cref(indx_threads[i]), ref(armstrongs));
+    for (int i = 0; i < THR_NUM;i++)
+        threads[i].join();
 
     cout << "armstrong numbers:" << endl;
     for (const auto& pair : armstrongs)
@@ -129,4 +139,17 @@ inline int get_num_len (const uint64_t& num) {
     while (copy_num /= N)
         length++;
     return length;
+}
+
+void thread_is_armstrong(const vector< vector<uint64_t>* >& storage, const vector<int>& depth_indx, map <uint64_t, int>& armstrongs) {
+    for (const auto& i : depth_indx) {
+        for (const auto& elem : *storage[i]) {
+            uint64_t pow_sum = get_pow_sum(elem);
+            if (is_armstrong(pow_sum)) {
+                g_lock.lock();
+                armstrongs[pow_sum]++;
+                g_lock.unlock();
+            }
+        }
+    }
 }
